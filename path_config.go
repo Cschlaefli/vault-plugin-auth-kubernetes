@@ -239,6 +239,8 @@ type kubeConfig struct {
 	PEMKeys []string `json:"pem_keys"`
 	// Host is the url string for the kubernetes API
 	Host string `json:"host"`
+	// HostSNI is an optional override for the SNI for tls handshakes with the kubernetes API
+	HostSNI string `json:"host_sni,omitempty"`
 	// CACert is the CA Cert to use to call into the kubernetes API
 	CACert string `json:"ca_cert"`
 	// TokenReviewJWT is the bearer to use during the TokenReview API call

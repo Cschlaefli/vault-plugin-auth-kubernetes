@@ -465,7 +465,9 @@ func (b *kubeAuthBackend) updateTLSConfig(config *kubeConfig) error {
 			// should never happen
 			return fmt.Errorf("type assertion failed for %T", b.httpClient.Transport)
 		}
-
+		if config.HostSNI != "" {
+			b.tlsConfig.ServerName = config.HostSNI
+		}
 		b.tlsConfig.RootCAs = certPool
 		transport.TLSClientConfig = b.tlsConfig
 		return nil
@@ -476,6 +478,9 @@ func (b *kubeAuthBackend) updateTLSConfig(config *kubeConfig) error {
 		return setTLSClientConfig()
 	} else if !b.tlsConfig.RootCAs.Equal(certPool) {
 		b.Logger().Trace("Root CA certificate pool has changed, updating the client's transport")
+		return setTLSClientConfig()
+	} else if b.tlsConfig.ServerName != config.HostSNI {
+		b.Logger().Trace("Host SNI has changed, updating the client's transport")
 		return setTLSClientConfig()
 	} else {
 		b.Logger().Trace("Root CA certificate pool is unchanged, no update required")
